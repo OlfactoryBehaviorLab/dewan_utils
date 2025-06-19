@@ -13,10 +13,11 @@ license = "MIT"
 authors = [{ name = "Austin Pauley", email = "pauley@psy.fsu.edu" }]
 
 dependencies = [
+    "pandas"
 ]
 
 [tool.setuptools.dynamic]
-version = {attr="dewan-utils.__version__"}
+version = {attr="dewan_utils.__version__"}
 
 [project.optional-dependencies]
 
