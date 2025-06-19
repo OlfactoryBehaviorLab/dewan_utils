@@ -13,9 +13,14 @@ license = "MIT"
 authors = [{ name = "Austin Pauley", email = "pauley@psy.fsu.edu" }]
 
 dependencies = [
-    "pandas"
+    "numpy",
+    "pandas",
+    "xlsxwriter"
 ]
 
+[tool.setuptools.packages.find]
+include = ["dewan_utils", "dewan_utils.*"]
+exclude = ["test_output_dir"]
 [tool.setuptools.dynamic]
 version = {attr="dewan_utils.__version__"}
 

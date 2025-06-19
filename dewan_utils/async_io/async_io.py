@@ -94,8 +94,8 @@ class AsyncIO(ThreadPoolExecutor):
 
         if not _path.parent.exists():
             self.logger.error(
-                "Supplied file path directory %s, does not exist! Unable to save!",
-                file_path,
+                "Supplied file path directory [%s], does not exist! Unable to save!",
+                _path.parent,
             )
             return
 
