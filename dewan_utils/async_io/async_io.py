@@ -10,6 +10,7 @@ import pandas as pd
 
 PICKLE_EXTENSIONS = [".pickle", ".pkl", ".pk"]
 
+
 class AsyncIO(ThreadPoolExecutor):
     """
     AsyncIO class instantiates a ThreadPoolExecuter to allow for asyncronous saving of different files while
@@ -20,8 +21,6 @@ class AsyncIO(ThreadPoolExecutor):
         self,
         logger: logging.Logger = None,
         logfile: os.PathLike = None,
-        *args,
-        **kwargs,
     ) -> None:
         """
         Constructs an AsyncIO object
@@ -73,7 +72,9 @@ class AsyncIO(ThreadPoolExecutor):
         logging.basicConfig(level=logging.NOTSET)
         self.logger = logger
 
-    def queue_save_df(self, df_to_save: pd.DataFrame, file_path: os.PathLike, *args, **kwargs) -> None:
+    def queue_save_df(
+        self, df_to_save: pd.DataFrame, file_path: os.PathLike, *args, **kwargs
+    ) -> None:
         """
         Public function to queue a Pandas Dataframe to be saved to disk
         Parameters
@@ -92,7 +93,10 @@ class AsyncIO(ThreadPoolExecutor):
         _extension = _path.suffix
 
         if not _path.parent.exists():
-            self.logger.error("Supplied file path directory %s, does not exist! Unable to save!", file_path)
+            self.logger.error(
+                "Supplied file path directory %s, does not exist! Unable to save!",
+                file_path,
+            )
             return
 
         if _extension == ".xlsx":
@@ -102,13 +106,12 @@ class AsyncIO(ThreadPoolExecutor):
         elif _extension in PICKLE_EXTENSIONS:
             _handle = save_df.save_df_as_pickle
         else:
-            _pkl_ext_formatted = "".join([f'\'{ext}\', ' for ext in PICKLE_EXTENSIONS])
+            _pkl_ext_formatted = "".join([f"'{ext}', " for ext in PICKLE_EXTENSIONS])
             self.logger.error(
                 "%s is not a known file extension. Known extensions are ['.xlsx', '.csv', %s]",
                 _extension,
-                _pkl_ext_formatted)
+                _pkl_ext_formatted,
+            )
             return
 
-        self.submit(_handle, self.logger, df_to_save, file_path,  *args, **kwargs)
-
-
+        self.submit(_handle, self.logger, df_to_save, file_path, *args, **kwargs)
