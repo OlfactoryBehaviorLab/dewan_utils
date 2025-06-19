@@ -107,7 +107,8 @@ class AsyncIO(ThreadPoolExecutor):
                 "%s is not a known file extension. Known extensions are ['.xlsx', '.csv', %s]",
                 _extension,
                 _pkl_ext_formatted)
+            return
 
-        self.submit(_handle, df_to_save, file_path,  *args, **kwargs)
+        self.submit(_handle, self.logger, df_to_save, file_path,  *args, **kwargs)
 
 
