@@ -1,10 +1,14 @@
 from concurrent.futures import ThreadPoolExecutor
+from pathlib import Path
 from typing import Union
+
+from dewan_utils.async_io import save_df
 
 import os
 import logging
 import pandas as pd
 
+PICKLE_EXTENSIONS = [".pickle", ".pkl", ".pk"]
 
 class AsyncIO(ThreadPoolExecutor):
     """
@@ -69,7 +73,7 @@ class AsyncIO(ThreadPoolExecutor):
         logging.basicConfig(level=logging.NOTSET)
         self.logger = logger
 
-    def queue_save_df(self, df_to_save: pd.DataFrame, file_path: os.PathLike) -> None:
+    def queue_save_df(self, df_to_save: pd.DataFrame, file_path: os.PathLike, *args, **kwargs) -> None:
         """
         Public function to queue a Pandas Dataframe to be saved to disk
         Parameters
@@ -83,25 +87,27 @@ class AsyncIO(ThreadPoolExecutor):
         -------
             None
         """
-        self.submit(self._save_df, df_to_save, file_path)
 
-    def _save_df(self, df_to_save: pd.DataFrame, file_path: os.PathLike) -> None:
-        """
-        Private function that saves a Dataframe. This function is submitted to the ThreadPoolExecuter as a job
-        Parameters
-        ----------
-        df_to_save (Pandas.DataFrame):
-            Pandas dataframe the user wishes to save to disk
-        file_path (os.PathLike):
-            File path with extension pointing to the save directory
+        _path = Path(file_path)
+        _extension = _path.suffix
 
-        Returns
-        -------
-            None
-        """
-        try:
-            df_to_save.to_excel(file_path)
-        except Exception:
-            self.logger.error("Unable to save %s", file_path)
+        if not _path.parent.exists():
+            self.logger.error("Supplied file path directory %s, does not exist! Unable to save!", file_path)
+            return
+
+        if _extension == ".xlsx":
+            _handle = save_df.save_df_as_excel
+        elif _extension == ".csv":
+            _handle = save_df.save_df_as_csv
+        elif _extension in PICKLE_EXTENSIONS:
+            _handle = save_df.save_df_as_pickle
         else:
-            self.logger.info("Saved %s", file_path)
+            _pkl_ext_formatted = "".join([f'\'{ext}\', ' for ext in PICKLE_EXTENSIONS])
+            self.logger.error(
+                "%s is not a known file extension. Known extensions are ['.xlsx', '.csv', %s]",
+                _extension,
+                _pkl_ext_formatted)
+
+        self.submit(_handle, df_to_save, file_path,  *args, **kwargs)
+
+
