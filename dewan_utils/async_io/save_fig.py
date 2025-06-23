@@ -21,8 +21,8 @@ def save_figure(figure: Figure, file_path: os.PathLike, logger: logging.Logger, 
     """
 
     try:
-        figure.savefig(file_path, *args, **kwargs)
-    except Exception:
-        logger.error("Unable to save %s", file_path)
+        figure.savefig(file_path, **kwargs)
+    except Exception as e:
+        logger.error("Unable to save %s \n %s", file_path, e)
     else:
         logger.info("Saved %s", file_path)
