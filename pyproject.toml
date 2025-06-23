@@ -13,9 +13,10 @@ license = "MIT"
 authors = [{ name = "Austin Pauley", email = "pauley@psy.fsu.edu" }]
 
 dependencies = [
+    "matplotlib>=3.10.3",
     "numpy",
     "pandas",
-    "xlsxwriter"
+    "xlsxwriter",
 ]
 
 [tool.setuptools.packages.find]

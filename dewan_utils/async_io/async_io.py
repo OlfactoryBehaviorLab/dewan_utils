@@ -2,12 +2,13 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Union
 
-from dewan_utils.async_io import save_df
+from dewan_utils.async_io import save_df, save_fig
 
 import os
 import logging
 import pandas as pd
 
+from matplotlib.figure import Figure
 PICKLE_EXTENSIONS = [".pickle", ".pkl", ".pk"]
 
 
@@ -115,3 +116,17 @@ class AsyncIO(ThreadPoolExecutor):
             return
 
         self.submit(_handle, self.logger, df_to_save, file_path, *args, **kwargs)
+
+
+    def queue_save_plot(self, figure_to_save: Figure, file_path: os.PathLike, *args, **kwargs) -> None:
+        _path = Path(file_path)
+        _extension = _path.suffix
+
+        if not _path.parent.exists():
+            self.logger.error(
+                "Supplied file path directory [%s], does not exist! Unable to save!",
+                _path.parent,
+            )
+            return
+
+        self.submit(save_fig.save_figure, figure_to_save, file_path, self.logger, *args, **kwargs)
