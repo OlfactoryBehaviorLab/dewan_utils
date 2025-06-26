@@ -7,6 +7,7 @@ def save_df_as_excel(
     logger: logging.Logger,
     df_to_save: pd.DataFrame,
     file_path: os.PathLike,
+    debug: bool = False,
     *args,
     **kwargs,
 ) -> None:
@@ -27,14 +28,16 @@ def save_df_as_excel(
         df_to_save.to_excel(file_path, *args, **kwargs)
     except Exception:
         logger.error("Unable to save %s", file_path)
-    else:
-        logger.info("Saved %s", file_path)
+
+    if debug:
+        logger.debug("Saved %s", file_path)
 
 
 def save_df_as_csv(
     logger: logging.Logger,
     df_to_save: pd.DataFrame,
     file_path: os.PathLike,
+    debug: bool = False,
     *args,
     **kwargs,
 ) -> None:
@@ -55,14 +58,16 @@ def save_df_as_csv(
         df_to_save.to_csv(file_path, *args, **kwargs)
     except Exception:
         logger.error("Unable to save %s", file_path)
-    else:
-        logger.info("Saved %s", file_path)
+
+    if debug:
+        logger.debug("Saved %s", file_path)
 
 
 def save_df_as_pickle(
     logger: logging.Logger,
     df_to_save: pd.DataFrame,
     file_path: os.PathLike,
+    debug: bool = False,
     *args,
     **kwargs,
 ) -> None:
@@ -83,5 +88,6 @@ def save_df_as_pickle(
         df_to_save.to_pickle(file_path, *args, **kwargs)
     except Exception:
         logger.error("Unable to save %s", file_path)
-    else:
-        logger.info("Saved %s", file_path)
+
+    if debug:
+        logger.debug("Saved %s", file_path)
